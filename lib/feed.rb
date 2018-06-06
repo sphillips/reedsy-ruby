@@ -6,8 +6,6 @@ class Feed
   end
 
   def retrieve
-    followed_books = user.follows.map(&:author).map(&:books)
-    upvoted_books = user.upvotes.map(&:book)
-    (upvoted_books + followed_books).uniq
+    user.feed
   end
 end

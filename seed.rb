@@ -36,6 +36,6 @@ Author.all.each do |author|
 end
 
 # create upvotes
-# Book.last(3).each do |book|
-#   user.upvotes.create(book: book)
-# end
+Book.all.limit(3).each do |book|
+  user.upvotes.create(book: book)
+end
