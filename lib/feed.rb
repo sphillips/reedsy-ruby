@@ -6,6 +6,9 @@ class Feed
   end
 
   def retrieve
-    user.feed
+    # fetch user's follows and upvotes, and de-dupe
+    feed = (user.followed_books + user.upvoted_books).uniq
+    # order by published date DESC
+    feed.sort_by(&:published_on).reverse
   end
 end

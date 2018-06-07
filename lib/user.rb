@@ -5,10 +5,11 @@ class User
   embeds_many :follows
   has_many :upvotes
 
-  def feed
-    followed_books = follows.map(&:author).map(&:books)
-    upvoted_books = upvotes.map(&:book)
-    feed = (upvoted_books + followed_books).uniq
-    # feed.sort_by
+  def followed_books
+    follows.map(&:author).map(&:books).flatten
+  end
+
+  def upvoted_books
+    upvotes.map(&:book)
   end
 end

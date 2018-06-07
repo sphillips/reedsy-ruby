@@ -8,6 +8,7 @@ configure do
   Mongoid.load!('./mongoid.yml')
 end
 
+# wipe database
 Author.delete_all
 Book.delete_all
 Follow.delete_all
@@ -24,8 +25,7 @@ user.save!
 end
 
 # create follow
-author = Author.first
-user.follows.create!(author: author)
+user.follows.create!(author: Author.first)
 
 # create books
 Author.all.each do |author|
@@ -37,5 +37,5 @@ end
 
 # create upvotes
 Book.all.limit(3).each do |book|
-  user.upvotes.create(book: book)
+  user.upvotes.create!(book: book)
 end
