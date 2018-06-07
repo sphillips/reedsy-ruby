@@ -15,14 +15,38 @@ $ rspec
 Or to dig into the code further:
 ```
 $ irb
-> require '/.seed'
+> require './seed'
+> User.first.follows
+=> [#<Follow _id: 5b18f6dcd5aedb0b017c0544, author_id: BSON::ObjectId('5b18f6dcd5aedb0b017c053e')>]
 ```
 
 #### Question 3
-Payment Factory
+**Design a Payment Factory**
+When designing a payment processing system for e-commerce, in order to maintain flexibility and SOLID principles, the data should be normalized as much as possible before sending to the payment processing API. For instance, we could build a class which assembles the order data from the shopping cart into an `Order` object, containing the relevant information:
+```
+order: {
+  id: '0b017c053e',
+  user_id: '5b18f6dcd5',
+  total_price: 1500,
+  currency: 'eur',
+  line_items: [
+    {
+      book_id: '5b18f6dcd5',
+      price: 1500
+    }
+  ]
+}
+```
+In most cases this is the bare minimum for the payment processing API (the line items aren't necessary to process the payment but will be used on the confirmation page and/or in a confirmation email).
+
+Next I would create a class for each payment method type because each payment type is handled differently. This design also allows for new APIs to be added in the future without having to modify the order system. For instance, for credit card transactions I would create a `StripePayment` class which parses the data from the `Order` object into the payload which will be transmitted to the Stripe API, and receive a response which is then passed onto the next piece of the chain, like the controller to redirect the user to the confirmation page or possibly a `PaymentResponse` class if we need that data to be handled a certain way, like structuring the confirmation email.
 
 #### Question 4
-Recommendation System
+**Recommendation System**
+For a book recommendation system, I would take inspiration from the [Spotify Algorithm](https://qz.com/571007/the-magic-that-makes-spotifys-discover-weekly-playlists-so-damn-good/) which works remarkably well at recommending new or unheard music to users. There are a couple heuristics at play here, which bear similarities to other widely referenced recommendation engines.
 
-#### Question 5 (Bonus)
-Implement recommendation system
+One is that it takes data from users, compiling their taste profile from their playlists and plays. For our book shop example, we could take a user's follows and upvotes to compile data on their tastes, and find other users with similar profiles to find books/authors that our user has not followed or upvoted yet. This is similar to Amazon's "other users also purchased" system.
+
+Another trick to getting the recommendations right is by using granular genres, like "gritty dystopian sci-fi" as opposed to a broad term like "sci-fi". This is similarly used by Netflix to nail down users' tastes and differentiate from broader recommendations.
+
+These two variables in conjunction build a very strong taste profile for a user. If we also choose to add weights certain tastes based on the number of upvotes or follows by a user in a given genre, and incorporate a user's browsing history to see if they have already viewed a book, we can further refine the accuracy for recommendations of books for the user that they are likely to enjoy but have not yet viewed.
