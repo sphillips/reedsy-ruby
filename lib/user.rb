@@ -5,7 +5,7 @@ class User
   embeds_many :follows
   has_many :upvotes
 
-  def followed_books
+  def followed_author_books
     follows.map(&:author).map(&:books).flatten
   end
 
